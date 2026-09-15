@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT / 'tools'))
 from content import SITE, NAV, ANCHORS, HOME, MENUS_PAGE, CELEB_PAGE, CONTACT_PAGE, NOTES  # noqa: E402
 
 IMG = ROOT / 'assets' / 'img'
+SITE_URL = 'https://florent-ui.github.io/nammos-dubai-v1/'  # URL publique GitHub Pages (aperçus de lien)
 e = lambda s: _html.escape(str(s), quote=False)
 ea = lambda s: _html.escape(str(s), quote=True)
 
@@ -456,7 +457,12 @@ def page_contact():
 def render(title, desc, body, og=False):
     head = f'''<title>{e(title)}</title>
 <meta name="description" content="{ea(desc)}">
-<meta property="og:title" content="{ea(title)}"><meta property="og:description" content="{ea(desc)}"><meta property="og:image" content="assets/img/og-1200.webp">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="{SITE_URL}__PAGE__">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Nammos Dubai"><meta property="og:url" content="{SITE_URL}__PAGE__">
+<meta property="og:title" content="{ea(title)}"><meta property="og:description" content="{ea(desc)}">
+<meta property="og:image" content="{SITE_URL}assets/img/og-1200.jpg"><meta property="og:image:secure_url" content="{SITE_URL}assets/img/og-1200.jpg"><meta property="og:image:type" content="image/jpeg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Nammos Dubai, Four Seasons Resort Jumeirah">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{ea(title)}"><meta name="twitter:description" content="{ea(desc)}"><meta name="twitter:image" content="{SITE_URL}assets/img/og-1200.jpg">
 <link rel="icon" href="assets/img/favicon-32x32.png" sizes="32x32">
 <link rel="preload" href="assets/fonts/SaolDisplay-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/SangBleuOGSans-Medium.woff2" as="font" type="font/woff2" crossorigin>
@@ -552,6 +558,8 @@ if __name__ == '__main__':
     pages = {'index.html': page_home(), 'menus.html': page_menus(), 'private-celebrations.html': page_celebrations(), 'contact.html': page_contact()}
     dist = ROOT / 'dist-artifact'; dist.mkdir(exist_ok=True)
     for name, (full, art) in pages.items():
+        page = '' if name == 'index.html' else name
+        full = full.replace('__PAGE__', page); art = art.replace('__PAGE__', page)
         (ROOT / name).write_text(full, encoding='utf-8')
         (dist / name).write_text(art if name == 'index.html' else full, encoding='utf-8')
     (ROOT / 'docs' / 'framer-kit.md').write_text(kit(), encoding='utf-8')
